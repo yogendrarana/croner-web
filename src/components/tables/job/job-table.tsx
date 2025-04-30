@@ -6,7 +6,7 @@ import { DataTablePagination } from "@/components/data-table/data-table-paginati
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { JobTableToolbar } from "./job-table-toolbar";
 import { DataTableFilterField } from "@/types/data-table";
-import { JobStatusEnum } from "@/types/enums/job";
+import { JobStatusEnum } from "@/types/enums/job-enums";
 import { useDataTable } from "@/hooks/use-data-table";
 
 interface PropType {

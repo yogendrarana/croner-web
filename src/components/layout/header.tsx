@@ -7,12 +7,21 @@ import { MoonIcon, SunIcon, Menu, X, ClockIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-
+import { authClient, signOut } from '@/lib/auth/auth-client';
+import { toast } from 'sonner';
 
 export default function Header() {
   const { setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { data, isPending } = authClient.useSession();
+
+  const logout = async () => {
+    await signOut();
+    setIsMenuOpen(false);
+    toast('Logged out successfully');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,18 +54,31 @@ export default function Header() {
         </div>
 
         {/* Auth & Theme Buttons */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="/auth/login">
-            <Button variant="ghost" size="sm" className="cursor-pointer">
-              Log in
+        {!isPending && data?.user ? (
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                Dashboard
+              </Button>
+            </Link>
+            <Button size="sm" className="cursor-pointer" onClick={logout}>
+              Log out
             </Button>
-          </Link>
-          <Link href="/auth/signup">
-            <Button size="sm" className="cursor-pointer">
-              Sign up
-            </Button>
-          </Link>
-        </div>
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center gap-4">
+            <Link href="/login">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
+                Log in
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button size="sm" className="cursor-pointer">
+                Sign up
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Mobile Menu Button */}
         <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
