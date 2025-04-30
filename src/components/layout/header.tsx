@@ -61,7 +61,7 @@ export default function Header() {
                 Dashboard
               </Button>
             </Link>
-            <Button size="sm" className="cursor-pointer" onClick={logout}>
+            <Button size="sm" className="cursor-pointer rounded" onClick={logout}>
               Log out
             </Button>
           </div>
