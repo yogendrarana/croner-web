@@ -1,6 +1,6 @@
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
-export const Verification = pgTable("verifications", {
+export const VerificationTable = pgTable("verifications", {
   id: text("id").primaryKey(),
   serialId: serial("serial_id").notNull(),
   identifier: text("identifier").notNull(),
@@ -12,5 +12,5 @@ export const Verification = pgTable("verifications", {
   updatedAt: timestamp("updated_at"),
 });
 
-export type VerificationSelect = typeof Verification.$inferSelect;
-export type VerificationInsert = typeof Verification.$inferInsert;
+export type VerificationSelect = typeof VerificationTable.$inferSelect;
+export type VerificationInsert = typeof VerificationTable.$inferInsert;

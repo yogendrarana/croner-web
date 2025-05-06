@@ -1,3 +1,5 @@
+CREATE TYPE "public"."http_method" AS ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE');--> statement-breakpoint
+CREATE TYPE "public"."job_status" AS ENUM('pending', 'running', 'success', 'failed', 'canceled');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('super_admin', 'admin', 'customer', 'staff', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('active', 'inactive', 'banned');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -15,6 +17,33 @@ CREATE TABLE "account" (
 	"user_id" text NOT NULL,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "cronjob" (
+	"id" text PRIMARY KEY NOT NULL,
+	"serial_id" serial NOT NULL,
+	"name" text NOT NULL,
+	"url" text NOT NULL,
+	"description" text,
+	"schedule" text NOT NULL,
+	"timezone" text DEFAULT 'UTC',
+	"active" boolean DEFAULT true NOT NULL,
+	"status" "job_status" DEFAULT 'pending',
+	"last_run_at" timestamp with time zone,
+	"last_run_status" "job_status",
+	"next_run_at" timestamp with time zone,
+	"max_retries" integer DEFAULT 3,
+	"timeout_seconds" integer DEFAULT 30,
+	"notify_on_failure" boolean DEFAULT true,
+	"notify_on_success_after_failure" boolean DEFAULT false,
+	"http_method" "http_method" DEFAULT 'POST',
+	"http_headers" jsonb,
+	"http_body" jsonb,
+	"http_auth_username" text,
+	"http_auth_password" text,
+	"user_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
@@ -58,4 +87,5 @@ CREATE TABLE "verifications" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "cronjob" ADD CONSTRAINT "cronjob_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

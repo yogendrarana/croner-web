@@ -27,7 +27,7 @@ const routes = [
   {
     label: "Cron Jobs",
     icon: Clock,
-    href: "/dashboard/jobs",
+    href: "/dashboard/cronjobs",
   },
   {
     label: "Status",
