@@ -1,7 +1,7 @@
-import { User } from './user';
+import { UserTable } from './user';
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const Account = pgTable('account', {
+export const AccountTable = pgTable('account', {
   id: text('id').primaryKey(),
   serialId: serial('serial_id').notNull(),
 
@@ -18,12 +18,12 @@ export const Account = pgTable('account', {
   // foreign keys
   userId: text('user_id')
     .notNull()
-    .references(() => User.id, { onDelete: 'cascade' }),
+    .references(() => UserTable.id, { onDelete: 'cascade' }),
 
   // time
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
 });
 
-export type AccountSelect = typeof Account.$inferSelect;
-export type AccountInsert = typeof Account.$inferInsert;
+export type AccountSelect = typeof AccountTable.$inferSelect;
+export type AccountInsert = typeof AccountTable.$inferInsert;

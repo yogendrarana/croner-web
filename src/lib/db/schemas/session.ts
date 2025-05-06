@@ -1,7 +1,7 @@
-import { User } from './user';
+import { UserTable } from './user';
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const Session = pgTable('session', {
+export const SessionTable = pgTable('session', {
   id: text('id').primaryKey(),
   serialId: serial('serial_id').notNull(),
 
@@ -11,7 +11,7 @@ export const Session = pgTable('session', {
   userAgent: text('user_agent'),
   userId: text('user_id')
     .notNull()
-    .references(() => User.id, { onDelete: 'cascade' }),
+    .references(() => UserTable.id, { onDelete: 'cascade' }),
 
   // date
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -19,5 +19,5 @@ export const Session = pgTable('session', {
 });
 
 // type
-export type SessionSelect = typeof Session.$inferSelect;
-export type SessionInsert = typeof Session.$inferInsert;
+export type SessionSelect = typeof SessionTable.$inferSelect;
+export type SessionInsert = typeof SessionTable.$inferInsert;

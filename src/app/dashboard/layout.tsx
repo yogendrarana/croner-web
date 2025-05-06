@@ -2,9 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 import Container from '@/components/container';
-import { DashboardNav } from '@/components/layout/dashboard-nav';
 import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
+import { DashboardNav } from '@/components/layout/dashboard-nav';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,7 +17,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Main Content */}
         <main className="flex-1 overflow-auto py-4">{children}</main>
       </main>
-      <Footer />
     </Container>
   );
 }

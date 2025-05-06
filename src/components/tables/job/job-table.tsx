@@ -1,13 +1,14 @@
-import React from "react";
-import { TJob } from "@/types/job";
-import { jobColumns } from "./job-columns";
-import DataTable from "@/components/data-table/data-table";
-import { DataTablePagination } from "@/components/data-table/data-table-pagination";
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { JobTableToolbar } from "./job-table-toolbar";
-import { DataTableFilterField } from "@/types/data-table";
-import { JobStatusEnum } from "@/types/enums/job-enums";
-import { useDataTable } from "@/hooks/use-data-table";
+'use client';
+
+import React from 'react';
+import { TJob } from '@/types/job';
+import { jobColumns } from './job-columns';
+import { useDataTable } from '@/hooks/use-data-table';
+import { JobStatusEnum } from '@/types/enums/job-enums';
+import { DataTableFilterField } from '@/types/data-table';
+import DataTable from '@/components/data-table/data-table';
+import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
+import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 
 interface PropType {
   data: TJob[];
@@ -16,15 +17,15 @@ interface PropType {
 export default function JobTable({ data }: PropType) {
   const filterFields: DataTableFilterField<TJob>[] = [
     {
-      label: "Name",
-      value: "name",
-      placeholder: "Search...",
+      label: 'Name',
+      value: 'name',
+      placeholder: 'Search...',
     },
     {
-      label: "Status",
-      value: "status",
+      label: 'Status',
+      value: 'status',
       options: Object.values(JobStatusEnum)?.map((status: string) => ({
-        label: status?.toUpperCase() || "",
+        label: status?.toUpperCase() || '',
         value: status,
         withCount: true,
       })),
@@ -37,8 +38,8 @@ export default function JobTable({ data }: PropType) {
     pageCount: Math.ceil(data.length / 10),
     filterFields,
     initialState: {
-      sorting: [{ id: "created", desc: true }],
-      columnPinning: { right: ["actions"] },
+      sorting: [{ id: 'created', desc: true }],
+      columnPinning: { right: ['actions'] },
       pagination: { pageSize: 10, pageIndex: 0 },
       columnVisibility: {
         created: false,
