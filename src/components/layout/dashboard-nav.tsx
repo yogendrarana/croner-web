@@ -4,18 +4,13 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   LayoutDashboard,
   Clock,
   Activity,
   BarChart3,
   Settings,
-  HelpCircle,
-  User,
   CreditCard,
-  Bell,
 } from "lucide-react";
 
 const routes = [

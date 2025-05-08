@@ -76,10 +76,10 @@ export default function Pricing() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Choose the plan that's right for you and start automating with
+            <p className="text-lg text-muted-foreground mb-8">
+            Choose the plan that&apos;s right for you and start automating with
             confidence.
-          </p>
+            </p>
 
           <div className="flex items-center justify-center space-x-4">
             <span className={cn("text-sm font-semibold")}>Monthly</span>

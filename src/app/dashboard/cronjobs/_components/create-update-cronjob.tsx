@@ -79,9 +79,9 @@ export default function CreateUpdateCronjob({ formMode }: PropTypes) {
           description: result?.message || 'Failed to create job.',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error('Error', {
-        description: 'Something went wrong. Please try again.',
+        description: error?.message || 'Something went wrong. Please try again.',
       });
     } finally {
       setIsSubmitting(false);

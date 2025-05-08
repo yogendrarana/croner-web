@@ -1,4 +1,4 @@
-import { TJob } from "@/types/job";
+import { TJob } from "@/types/cronjob";
 
 export const jobs: TJob[] = [
   {

@@ -16,10 +16,6 @@ import {
   AlertTriangle,
   Clock,
   Server,
-  Activity,
-  ArrowDown,
-  ArrowUp,
-  BarChart
 } from 'lucide-react';
 import { AreaChart, LineChart } from 'recharts';
 
@@ -66,7 +62,7 @@ const uptimeData = [
 
 export default function StatusPage() {
   const [progress, setProgress] = useState(13);
-  const [systemHealth, setSystemHealth] = useState(99.7);
+  const [systemHealth,] = useState(99.7);
   
   useEffect(() => {
     const interval = setInterval(() => {

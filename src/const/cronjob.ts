@@ -1,10 +1,7 @@
-// pending, running, success, failed, canceled
-export const CronjobStatus = {
+export const CronJobStatus = {
   PENDING: 'pending',
   RUNNING: 'running',
   SUCCESS: 'success',
   FAILED: 'failed',
   CANCELED: 'canceled',
 } as const;
-
-export type CronjobStatusType = (typeof CronjobStatus)[keyof typeof CronjobStatus];

@@ -144,7 +144,7 @@ export default function SignupPage() {
             </Button>
 
             <Button variant="outline" className="w-full" onClick={() => toast('Google sign in coming soon!')} disabled={isSubmitting}>
-              <Google className="mr-2" /> Sign in with Google'
+              <Google className="mr-2" /> Sign in with Google
             </Button>
 
             <div className="text-center text-sm">

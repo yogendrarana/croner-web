@@ -1,8 +1,5 @@
-import React from "react";
-
-import { Button } from "@/components/ui/button";
-
-import { MoreHorizontal, Pencil, Play, Pause, Trash2 } from "lucide-react";
+import React from 'react';
+import { MoreHorizontal, Pencil, Play, Pause, Trash2 } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -11,14 +8,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { TJob } from "@/types/job";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { TTanStackCronJob } from '@/types/cronjob';
 
 interface PropType {
-  job: TJob;
+  job: TTanStackCronJob;
 }
 
-function JobTableRowActions({ job }: PropType) {
+export default function CronjobTableRowActions({ job }: PropType) {
   return (
     <div className="text-right">
       <DropdownMenu>
@@ -60,5 +58,3 @@ function JobTableRowActions({ job }: PropType) {
     </div>
   );
 }
-
-export default JobTableRowActions;
