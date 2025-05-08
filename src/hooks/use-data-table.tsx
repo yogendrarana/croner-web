@@ -3,6 +3,12 @@
 import { z } from 'zod';
 import * as React from 'react';
 import {
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type TableOptions,
+  type TableState,
+  type VisibilityState,
   useReactTable,
   getCoreRowModel,
   getFacetedRowModel,
@@ -10,12 +16,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type ColumnFiltersState,
-  type PaginationState,
-  type SortingState,
-  type TableOptions,
-  type TableState,
-  type VisibilityState,
 } from '@tanstack/react-table';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useQueryString } from '@/hooks/use-query-string';
@@ -47,10 +47,10 @@ const searchParamsSchema = z.object({
   sort: z.string().optional(),
 });
 
-const PAGE_KEY = "page";
-const PER_PAGE_KEY = "perPage";
-const SORT_KEY = "sort";
-const ARRAY_SEPARATOR = ",";
+const PAGE_KEY = 'page';
+const PER_PAGE_KEY = 'perPage';
+const SORT_KEY = 'sort';
+const ARRAY_SEPARATOR = ',';
 const DEBOUNCE_MS = 300;
 const THROTTLE_MS = 50;
 
@@ -65,11 +65,14 @@ export function useDataTable<TData>({
   debounceMs = DEBOUNCE_MS,
   throttleMs = THROTTLE_MS,
   initialState,
+  columns,
   ...tableProps
 }: UseDataTableProps<TData>) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  console.log('searchParams', searchParams.entries());
+  const { createQueryString } = useQueryString(searchParams);
 
   // Search params
   const search = searchParamsSchema.parse(Object.fromEntries(searchParams));
@@ -88,8 +91,6 @@ export function useDataTable<TData>({
     };
   }, [filterFields]);
 
-  // Create query string
-  const { createQueryString } = useQueryString(searchParams);
 
   // Initial column filters
   const initialColumnFilters: ColumnFiltersState = React.useMemo(() => {
@@ -227,6 +228,8 @@ export function useDataTable<TData>({
   const table = useReactTable({
     ...tableProps,
     pageCount,
+    columns,
+    initialState,
     state: {
       pagination,
       sorting,

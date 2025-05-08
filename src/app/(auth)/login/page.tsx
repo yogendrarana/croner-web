@@ -25,7 +25,7 @@ export default function LoginPage() {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<SigninFormValues>({
     resolver: zodResolver(SigninSchema),
     defaultValues: {
@@ -122,11 +122,11 @@ export default function LoginPage() {
             </Button>
 
             <Button variant="outline" className="w-full" onClick={() => toast('Google sign in coming soon!')} disabled={isSubmitting}>
-              <Google className="mr-2" /> Sign in with Google'
+              <Google className="mr-2" /> Sign in with Google
             </Button>
 
             <div className="text-center text-sm">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/signup" className="text-primary underline">
                 Sign up
               </Link>

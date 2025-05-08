@@ -1,4 +1,4 @@
-import { ColumnSort, Row } from "@tanstack/react-table";
+import { ColumnSort, Row } from '@tanstack/react-table';
 
 export interface Option {
   label: string;
@@ -24,11 +24,11 @@ export interface DataTableFilterOption<TData> {
   isMulti?: boolean;
 }
 
-export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, "id"> {
+export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, 'id'> {
   id: Extract<keyof TData, string>;
 }
 
 export interface DataTableRowAction<TData> {
   row: Row<TData>;
-  variant: "update" | "delete";
+  variant: 'update' | 'delete';
 }

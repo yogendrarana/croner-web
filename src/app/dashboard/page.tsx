@@ -9,23 +9,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Activity,
-  ArrowUpRight,
   CheckCircle2,
   Clock,
   XCircle,
-  AlertCircle,
-  Plus,
-  BarChart3,
   Cpu,
   ArrowRight,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { AreaChart, LineChart, BarChart } from "recharts";
 
 // Mock data
 const recentJobs = [
@@ -69,16 +63,6 @@ const recentJobs = [
     status: "running",
     duration: "8s",
   },
-];
-
-const chartData = [
-  { name: "Apr 16", successful: 42, failed: 2 },
-  { name: "Apr 17", successful: 40, failed: 4 },
-  { name: "Apr 18", successful: 45, failed: 1 },
-  { name: "Apr 19", successful: 48, failed: 0 },
-  { name: "Apr 20", successful: 38, failed: 6 },
-  { name: "Apr 21", successful: 44, failed: 2 },
-  { name: "Apr 22", successful: 46, failed: 3 },
 ];
 
 const systemStatus = {

@@ -1,25 +1,25 @@
 'use client';
 
 import React from 'react';
-import { TJob } from '@/types/job';
-import { jobColumns } from './job-columns';
+import { cronjobColumns } from './cronjob-columns';
 import { useDataTable } from '@/hooks/use-data-table';
+import { TanStackTableCronJob } from '@/types/cronjob';
 import { JobStatusEnum } from '@/types/enums/job-enums';
 import { DataTableFilterField } from '@/types/data-table';
 import DataTable from '@/components/data-table/data-table';
-import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
-import { DataTablePagination } from '@/components/data-table/data-table-pagination';
+import DataTableToolbar from '@/components/data-table/data-table-toolbar';
+import DataTablePagination from '@/components/data-table/data-table-pagination';
 
 interface PropType {
-  data: TJob[];
+  data: TanStackTableCronJob[];
 }
 
-export default function JobTable({ data }: PropType) {
-  const filterFields: DataTableFilterField<TJob>[] = [
+export default function CronjobTable({ data }: PropType) {
+  const filterFields: DataTableFilterField<TanStackTableCronJob>[] = [
     {
       label: 'Name',
       value: 'name',
-      placeholder: 'Search...',
+      placeholder: 'Search by name...',
     },
     {
       label: 'Status',
@@ -34,11 +34,11 @@ export default function JobTable({ data }: PropType) {
 
   const { table } = useDataTable({
     data,
-    columns: jobColumns,
+    columns: cronjobColumns,
     pageCount: Math.ceil(data.length / 10),
     filterFields,
     initialState: {
-      sorting: [{ id: 'created', desc: true }],
+      sorting: [{ id: 'created_at', desc: true }],
       columnPinning: { right: ['actions'] },
       pagination: { pageSize: 10, pageIndex: 0 },
       columnVisibility: {
@@ -52,7 +52,7 @@ export default function JobTable({ data }: PropType) {
   return (
     <div className="space-y-1 rounded-md border p-2 bg-muted">
       <DataTableToolbar table={table} filterFields={filterFields} />
-      <DataTable table={table} className="w-full" />
+      <DataTable table={table} className="bg-background" />
       <DataTablePagination table={table} className="px-1" />
     </div>
   );

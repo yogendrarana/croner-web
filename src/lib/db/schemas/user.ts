@@ -1,7 +1,8 @@
-import { RoleEnum, UserStatusEnum } from '@/types/enums/user-enums';
-import { pgEnum, pgTable, serial, text, varchar, timestamp, boolean, jsonb } from 'drizzle-orm/pg-core';
-import { CronjobTable } from './cronjob';
 import { relations } from 'drizzle-orm';
+import { pgEnum, pgTable, serial, text, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
+
+import { CronjobTable } from './cronjob';
+import { RoleEnum, UserStatusEnum } from '@/types/enums/user-enums';
 
 // Create Postgres enums from TypeScript enums
 export const roleEnum = pgEnum('role', Object.values(RoleEnum) as [string, ...string[]]);

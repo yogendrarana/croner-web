@@ -1,9 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
 
-import { TJob } from '@/types/job';
 import JobStatus from '@/components/job-status';
-import JobTableRowActions from './job-table-row-actions';
-import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
+import { TanStackTableCronJob } from '@/types/cronjob';
+import { Checkbox } from '@/components/ui/checkbox';
+import JobTableRowActions from './cronjob-table-row-actions';
+import DataTableColumnHeader from '@/components/data-table/data-table-column-header';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -15,31 +16,28 @@ const formatDate = (dateString: string) => {
   }).format(date);
 };
 
-export const jobColumns: ColumnDef<TJob>[] = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //       className="translate-y-0.5"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //       className="translate-y-0.5"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
+export const cronjobColumns: ColumnDef<TanStackTableCronJob>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-0.5"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-0.5"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'name',
     header: 'Name',
@@ -83,9 +81,9 @@ export const jobColumns: ColumnDef<TJob>[] = [
     },
   },
   {
-    accessorKey: 'created',
+    accessorKey: 'created_at',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
-    cell: ({ row }) => formatDate(row.getValue('created')),
+    cell: ({ row }) => formatDate(row.getValue('created_at')),
   },
   {
     id: 'actions',

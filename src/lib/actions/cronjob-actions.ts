@@ -7,11 +7,11 @@ import { CronExpressionParser } from 'cron-parser';
 
 import db from '../db';
 import { auth } from '../auth/auth';
-import { ApiResponse } from '@/types/response';
-import { CronjobTable } from '../db/schemas/cronjob';
-import { CronjobStatus } from '@/const/cronjob';
-import { CronJobSchema } from '../validations/cronjob-schema';
 import { generateRandomId } from '../utils';
+import { ApiResponse } from '@/types/response';
+import { CronJobStatus } from '@/const/cronjob';
+import { CronjobTable } from '../db/schemas/cronjob';
+import { CronJobSchema } from '../validations/cronjob-schema';
 
 type TypeCronjob = z.infer<typeof CronJobSchema>;
 
@@ -54,7 +54,7 @@ export const createCronjob = async (cronjob: TypeCronjob): Promise<ApiResponse> 
       schedule: job.schedule,
       timezone: job.timezone,
       active: job.active,
-      status: CronjobStatus.PENDING,
+      status: CronJobStatus.PENDING,
       lastRunAt: null,
       lastRunStatus: null,
       nextRunAt,

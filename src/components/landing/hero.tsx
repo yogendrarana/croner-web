@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TextLoop } from "@/components/text-loop";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { TextLoop } from '@/components/text-loop';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -28,8 +29,7 @@ export default function Hero() {
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl">
-            Croner is a modern cron job scheduler that makes it simple to run
-            automated tasks with precision timing and reliable execution.
+            Croner is a modern cron job scheduler that makes it simple to run automated tasks with precision timing and reliable execution.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -70,9 +70,7 @@ export default function Hero() {
               <div className="h-3 w-3 rounded-full bg-destructive/70"></div>
               <div className="h-3 w-3 rounded-full bg-amber-500/70"></div>
               <div className="h-3 w-3 rounded-full bg-green-500/70"></div>
-              <div className="mx-auto text-sm text-muted-foreground">
-                Dashboard Preview
-              </div>
+              <div className="mx-auto text-sm text-muted-foreground">Dashboard Preview</div>
             </div>
 
             <div className="p-4">

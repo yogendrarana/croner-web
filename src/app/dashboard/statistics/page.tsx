@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BarChart, LineChart, AreaChart, PieChart } from 'recharts';
+import { BarChart, LineChart, AreaChart } from 'recharts';
 import { ChevronUp, ChevronDown, ArrowUpRight, DownloadIcon, RefreshCcw } from 'lucide-react';
 
 export default function StatisticsPage() {
@@ -40,14 +40,6 @@ export default function StatisticsPage() {
     { name: "Email Campaign", executions: 45 },
     { name: "Analytics Report", executions: 32 },
     { name: "System Check", executions: 28 },
-  ];
-  
-  const jobCategories = [
-    { name: "Database", value: 35 },
-    { name: "Reporting", value: 25 },
-    { name: "Maintenance", value: 20 },
-    { name: "Notifications", value: 15 },
-    { name: "Other", value: 5 },
   ];
   
   return (
