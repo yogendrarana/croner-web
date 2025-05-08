@@ -1,6 +1,6 @@
-import { TJob } from "@/types/cronjob";
+import { TanStackTableCronJob } from "@/types/cronjob";
 
-export const jobs: TJob[] = [
+export const jobs: TanStackTableCronJob[] = [
   {
     id: 1,
     name: "Database Backup",
@@ -10,7 +10,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-23T02:00:00",
     status: "success",
     active: true,
-    created: "2025-01-15T10:23:00",
+    created_at: "2025-01-15T10:23:00",
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-23T12:00:00",
     status: "success",
     active: true,
-    created: "2025-01-18T14:45:00",
+    created_at: "2025-01-18T14:45:00",
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-29T09:00:00",
     status: "failed",
     active: false,
-    created: "2025-02-05T09:12:00",
+    created_at: "2025-02-05T09:12:00",
   },
   {
     id: 4,
@@ -43,7 +43,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-26T07:00:00",
     status: "success",
     active: true,
-    created: "2025-02-12T16:30:00",
+    created_at: "2025-02-12T16:30:00",
   },
   {
     id: 5,
@@ -54,7 +54,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-22T16:00:00",
     status: "running",
     active: true,
-    created: "2025-01-05T11:20:00",
+    created_at: "2025-01-05T11:20:00",
   },
   {
     id: 6,
@@ -65,7 +65,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-28T03:00:00",
     status: "success",
     active: true,
-    created: "2025-03-01T08:45:00",
+    created_at: "2025-03-01T08:45:00",
   },
   {
     id: 7,
@@ -76,7 +76,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-05-01T06:00:00",
     status: "success",
     active: true,
-    created: "2025-01-25T13:10:00",
+    created_at: "2025-01-25T13:10:00",
   },
   {
     id: 8,
@@ -87,7 +87,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-23T10:00:00",
     status: "pending",
     active: true,
-    created: "2025-02-18T10:30:00",
+    created_at: "2025-02-18T10:30:00",
   },
   {
     id: 9,
@@ -98,7 +98,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-22T02:00:00",
     status: "success",
     active: true,
-    created: "2025-03-10T14:20:00",
+    created_at: "2025-03-10T14:20:00",
   },
   {
     id: 10,
@@ -109,7 +109,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-28T01:00:00",
     status: "failed",
     active: false,
-    created: "2025-03-15T11:50:00",
+    created_at: "2025-03-15T11:50:00",
   },
   {
     id: 11,
@@ -120,7 +120,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-22T16:00:00",
     status: "running",
     active: true,
-    created: "2025-03-20T09:00:00",
+    created_at: "2025-03-20T09:00:00",
   },
   {
     id: 12,
@@ -131,7 +131,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-28T08:00:00",
     status: "success",
     active: true,
-    created: "2025-03-25T10:15:00",
+    created_at: "2025-03-25T10:15:00",
   },
   {
     id: 13,
@@ -142,7 +142,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-23T02:00:00",
     status: "success",
     active: true,
-    created: "2025-03-30T12:00:00",
+    created_at: "2025-03-30T12:00:00",
   },
   {
     id: 14,
@@ -153,7 +153,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-23T04:00:00",
     status: "success",
     active: true,
-    created: "2025-04-01T11:30:00",
+    created_at: "2025-04-01T11:30:00",
   },
   {
     id: 15,
@@ -164,7 +164,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-28T05:00:00",
     status: "success",
     active: true,
-    created: "2025-04-02T09:45:00",
+    created_at: "2025-04-02T09:45:00",
   },
   {
     id: 16,
@@ -175,7 +175,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-27T00:00:00",
     status: "success",
     active: true,
-    created: "2025-04-05T10:00:00",
+    created_at: "2025-04-05T10:00:00",
   },
   {
     id: 17,
@@ -186,7 +186,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-28T03:00:00",
     status: "success",
     active: true,
-    created: "2025-04-10T14:30:00",
+    created_at: "2025-04-10T14:30:00",
   },
   {
     id: 18,
@@ -197,7 +197,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-26T06:00:00",
     status: "success",
     active: true,
-    created: "2025-04-12T11:15:00",
+    created_at: "2025-04-12T11:15:00",
   },
   {
     id: 19,
@@ -208,7 +208,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-27T07:00:00",
     status: "success",
     active: true,
-    created: "2025-04-15T10:50:00",
+    created_at: "2025-04-15T10:50:00",
   },
   {
     id: 20,
@@ -219,7 +219,7 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-25T09:00:00",
     status: "success",
     active: true,
-    created: "2025-04-17T12:30:00",
+    created_at: "2025-04-17T12:30:00",
   },
   {
     id: 21,
@@ -230,6 +230,6 @@ export const jobs: TJob[] = [
     nextRun: "2025-04-26T11:00:00",
     status: "success",
     active: true,
-    created: "2025-04-20T14:00:00",
+    created_at: "2025-04-20T14:00:00",
   },
 ];
