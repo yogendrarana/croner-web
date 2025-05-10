@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { type Table } from "@tanstack/react-table";
-import { exportTableToCSV } from "@/lib/csv";
-import { DownloadIcon } from "@radix-ui/react-icons";
-import { TanStackTableCronJob } from "@/types/cronjob";
+import { exportTableToCSV } from '@/lib/csv';
+import { Button } from '@/components/ui/button';
+import { type Table } from '@tanstack/react-table';
+import { DownloadIcon } from '@radix-ui/react-icons';
+import { TanStackTableCronJob } from '@/types/cronjob';
 
 interface OrderTableToolbarProps {
   table: Table<TanStackTableCronJob>;
@@ -18,8 +18,8 @@ export default function CronjobTableToolbar({ table }: OrderTableToolbarProps) {
         size="sm"
         onClick={() =>
           exportTableToCSV(table, {
-            filename: "jobs",
-            excludeColumns: ["select", "actions"],
+            filename: 'jobs',
+            excludeColumns: ['select', 'actions'],
           })
         }
       >

@@ -42,7 +42,7 @@ export default function CronjobTable({ data }: PropType) {
       columnPinning: { right: ['actions'] },
       pagination: { pageSize: 10, pageIndex: 0 },
       columnVisibility: {
-        created: false,
+        created_at: false,
       },
     },
     // For remembering the previous row selection on page change

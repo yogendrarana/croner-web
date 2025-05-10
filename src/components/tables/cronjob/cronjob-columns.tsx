@@ -1,8 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import JobStatus from '@/components/job-status';
-import { TanStackTableCronJob } from '@/types/cronjob';
 import { Checkbox } from '@/components/ui/checkbox';
+import { TanStackTableCronJob } from '@/types/cronjob';
 import JobTableRowActions from './cronjob-table-row-actions';
 import DataTableColumnHeader from '@/components/data-table/data-table-column-header';
 

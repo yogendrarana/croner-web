@@ -1,31 +1,22 @@
+import { useCallback, useEffect, useRef } from 'react';
+import useCallbackRef from '@/hooks/use-callback-ref';
+
 /**
- * @see https://github.com/mantinedev/mantine/blob/master/packages/@mantine/hooks/src/use-debounced-callback/use-debounced-callback.ts
+ * useDebouncedCallback – Debounces a callback while avoiding stale closures
  */
 
-import * as React from "react";
+export function useDebouncedCallback<T extends (...args: never[]) => unknown>(callback: T, delay: number) {
+  const savedCallback = useCallbackRef(callback);
+  const timeoutRef = useRef<number | undefined>(undefined);
 
-import { useCallbackRef } from "@/hooks/use-callback-ref";
+  useEffect(() => () => window.clearTimeout(timeoutRef.current), []);
 
-export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
-  callback: T,
-  delay: number,
-) {
-  const handleCallback = useCallbackRef(callback);
-  const debounceTimerRef = React.useRef(0);
-  React.useEffect(
-    () => () => window.clearTimeout(debounceTimerRef.current),
-    [],
-  );
-
-  const setValue = React.useCallback(
+  const setValue = useCallback(
     (...args: Parameters<T>) => {
-      window.clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = window.setTimeout(
-        () => handleCallback(...args),
-        delay,
-      );
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = window.setTimeout(() => savedCallback(...args), delay);
     },
-    [handleCallback, delay],
+    [savedCallback, delay],
   );
 
   return setValue;

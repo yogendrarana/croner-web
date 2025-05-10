@@ -10,10 +10,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { TTanStackCronJob } from '@/types/cronjob';
+import { TanStackTableCronJob } from '@/types/cronjob';
 
 interface PropType {
-  job: TTanStackCronJob;
+  job: TanStackTableCronJob;
 }
 
 export default function CronjobTableRowActions({ job }: PropType) {
