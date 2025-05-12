@@ -7,9 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   table: TanstackTable<TData>;
   floatingBar?: React.ReactNode | null;
+  actionBar?: React.ReactNode | null;
 }
 
-export default function DataTable<TData>({ table, className }: DataTableProps<TData>) {
+export default function DataTable<TData>({ table, className, actionBar }: DataTableProps<TData>) {
   return (
     <div className={cn('w-full rounded-md border overflow-hidden', className)}>
       <Table>
@@ -44,6 +45,8 @@ export default function DataTable<TData>({ table, className }: DataTableProps<TD
           )}
         </TableBody>
       </Table>
+
+      <div className="flex flex-col gap-2.5">{actionBar && table.getFilteredSelectedRowModel().rows.length > 0 && actionBar}</div>
     </div>
   );
 }

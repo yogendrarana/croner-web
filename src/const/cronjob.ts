@@ -1,7 +1,10 @@
 export const CronJobStatus = {
-  PENDING: 'pending',
-  RUNNING: 'running',
+  ENABLED: 'enabled',
+  DISABLED: 'disabled',
+  PAUSED: 'paused',
+} as const;
+
+export const CronJobLastRunStatus = {
   SUCCESS: 'success',
   FAILED: 'failed',
-  CANCELED: 'canceled',
 } as const;

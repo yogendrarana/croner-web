@@ -1,12 +1,14 @@
-import { pgEnum, pgTable } from 'drizzle-orm/pg-core';
-import { UserTable } from './user';
 import { relations } from 'drizzle-orm';
+import { pgEnum, pgTable } from 'drizzle-orm/pg-core';
+
+import { UserTable } from './user';
 
 // Enums
 export const httpMethodEnum = pgEnum('http_method', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
-export const jobStatusEnum = pgEnum('job_status', ['pending', 'running', 'success', 'failed', 'canceled']);
+export const jobStatusEnum = pgEnum('job_status', ['enabled', 'disabled', 'paused']);
+export const jobLastRunStatusEnum = pgEnum('last_run_status', ['success', 'failed']);
 
-export const CronjobTable = pgTable('cronjob', t => ({
+export const CronJobTable = pgTable('cronjob', t => ({
   id: t.text('id').primaryKey(),
   serialId: t.serial('serial_id').notNull(),
 
@@ -21,10 +23,10 @@ export const CronjobTable = pgTable('cronjob', t => ({
   active: t.boolean('active').notNull().default(true),
 
   // Execution Tracking
-  status: jobStatusEnum('status').default('pending'),
-  lastRunAt: t.timestamp('last_run_at', { withTimezone: true }),
-  lastRunStatus: jobStatusEnum('last_run_status'),
-  nextRunAt: t.timestamp('next_run_at', { withTimezone: true }),
+  status: jobStatusEnum('status'),
+  lastRun: t.timestamp('last_run', { withTimezone: true }),
+  lastRunStatus: jobLastRunStatusEnum('last_run_status'),
+  nextRun: t.timestamp('next_run', { withTimezone: true }),
 
   // Retry & Timeout
   maxRetries: t.integer('max_retries').default(3),
@@ -55,13 +57,13 @@ export const CronjobTable = pgTable('cronjob', t => ({
 }));
 
 // relations
-export const cronjobRelations = relations(CronjobTable, ({ one }) => ({
+export const cronjobRelations = relations(CronJobTable, ({ one }) => ({
   user: one(UserTable, {
-    fields: [CronjobTable.userId],
+    fields: [CronJobTable.userId],
     references: [UserTable.id],
   }),
 }));
 
 // types
-export type CronjobSelect = typeof CronjobTable.$inferSelect;
-export type CronjobInsert = typeof CronjobTable.$inferInsert;
+export type CronJobSelect = typeof CronJobTable.$inferSelect;
+export type CronJobInsert = typeof CronJobTable.$inferInsert;

@@ -1,5 +1,5 @@
 {
-  "id": "313fd9d0-8d3b-4345-bc2d-6b117b7456dc",
+  "id": "261d072b-b3b3-4735-ab01-5f01442ccad3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -174,24 +174,23 @@
           "type": "job_status",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'pending'"
+          "notNull": false
         },
-        "last_run_at": {
-          "name": "last_run_at",
+        "last_run": {
+          "name": "last_run",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "last_run_status": {
           "name": "last_run_status",
-          "type": "job_status",
+          "type": "last_run_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
-        "next_run_at": {
-          "name": "next_run_at",
+        "next_run": {
+          "name": "next_run",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -425,8 +424,8 @@
           "notNull": true,
           "default": "'customer'"
         },
-        "user_status": {
-          "name": "user_status",
+        "status": {
+          "name": "status",
           "type": "user_status",
           "typeSchema": "public",
           "primaryKey": false,
@@ -564,15 +563,21 @@
         "DELETE"
       ]
     },
+    "public.last_run_status": {
+      "name": "last_run_status",
+      "schema": "public",
+      "values": [
+        "success",
+        "failed"
+      ]
+    },
     "public.job_status": {
       "name": "job_status",
       "schema": "public",
       "values": [
-        "pending",
-        "running",
-        "success",
-        "failed",
-        "canceled"
+        "enabled",
+        "disabled",
+        "paused"
       ]
     },
     "public.role": {

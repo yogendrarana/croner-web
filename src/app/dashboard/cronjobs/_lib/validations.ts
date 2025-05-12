@@ -1,6 +1,7 @@
-import * as z from 'zod';
+import { z } from 'zod';
+import { CronJobLastRunStatus, CronJobStatus } from '@/const/cronjob';
 
-export const CronJobSchema = z.object({
+export const CreateCronJobSchema = z.object({
   name: z.string().min(1, 'Job name is required'),
   url: z.string().url('Invalid URL'),
   description: z.string().optional(),
@@ -27,3 +28,7 @@ export const CronJobSchema = z.object({
   maxRetries: z.number().min(0).max(10),
   timeoutSeconds: z.number().min(1).max(300),
 });
+
+export type TCreateCronJobSchema = z.infer<typeof CreateCronJobSchema>;
+export type TCronJobStatus = (typeof CronJobStatus)[keyof typeof CronJobStatus];
+export type TCronJobLastRunStatus = (typeof CronJobLastRunStatus)[keyof typeof CronJobLastRunStatus];

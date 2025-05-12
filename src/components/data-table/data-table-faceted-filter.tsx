@@ -19,7 +19,12 @@ interface DataTableFacetedFilterProps<TData, TValue> {
   multiple?: boolean;
 }
 
-export default function DataTableFacetedFilter<TData, TValue>({ column, title, options, multiple = true }: DataTableFacetedFilterProps<TData, TValue>) {
+export default function DataTableFacetedFilter<TData, TValue>({
+  column,
+  title,
+  options,
+  multiple = true,
+}: DataTableFacetedFilterProps<TData, TValue>) {
   const [open, setOpen] = React.useState(false);
 
   const columnFilterValue = column?.getFilterValue();
@@ -43,7 +48,7 @@ export default function DataTableFacetedFilter<TData, TValue>({ column, title, o
         setOpen(false);
       }
     },
-    [column, multiple],
+    [column, multiple, selectedValues],
   );
 
   const onReset = React.useCallback(
@@ -97,6 +102,7 @@ export default function DataTableFacetedFilter<TData, TValue>({ column, title, o
           )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-[12.5rem] p-0" align="start">
         <Command>
           <CommandInput placeholder={title} />
@@ -117,8 +123,8 @@ export default function DataTableFacetedFilter<TData, TValue>({ column, title, o
                       <Check className="size-4" aria-hidden="true" />
                     </div>
                     {option.icon && <option.icon />}
-                    <span className="truncate text-xs">{option.label}</span>
-                    {option.withCount && <span className="ml-auto font-mono text-xs">{option.withCount}</span>}
+                    {/* <span className="truncate">{option.label}</span> */}
+                    {option.count && <span className="ml-auto font-mono text-xs">{option.count}</span>}
                   </CommandItem>
                 );
               })}

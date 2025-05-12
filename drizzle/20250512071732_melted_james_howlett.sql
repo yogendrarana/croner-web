@@ -1,5 +1,6 @@
 CREATE TYPE "public"."http_method" AS ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE');--> statement-breakpoint
-CREATE TYPE "public"."job_status" AS ENUM('pending', 'running', 'success', 'failed', 'canceled');--> statement-breakpoint
+CREATE TYPE "public"."last_run_status" AS ENUM('success', 'failed');--> statement-breakpoint
+CREATE TYPE "public"."job_status" AS ENUM('enabled', 'disabled', 'paused');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('super_admin', 'admin', 'customer', 'staff', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('active', 'inactive', 'banned');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -28,10 +29,10 @@ CREATE TABLE "cronjob" (
 	"schedule" text NOT NULL,
 	"timezone" text DEFAULT 'UTC',
 	"active" boolean DEFAULT true NOT NULL,
-	"status" "job_status" DEFAULT 'pending',
-	"last_run_at" timestamp with time zone,
-	"last_run_status" "job_status",
-	"next_run_at" timestamp with time zone,
+	"status" "job_status",
+	"last_run" timestamp with time zone,
+	"last_run_status" "last_run_status",
+	"next_run" timestamp with time zone,
 	"max_retries" integer DEFAULT 3,
 	"timeout_seconds" integer DEFAULT 30,
 	"notify_on_failure" boolean DEFAULT true,
@@ -65,7 +66,7 @@ CREATE TABLE "user" (
 	"name" varchar(100),
 	"email" varchar(255) NOT NULL,
 	"role" "role" DEFAULT 'customer' NOT NULL,
-	"user_status" "user_status" DEFAULT 'active',
+	"status" "user_status" DEFAULT 'active',
 	"email_verified" boolean DEFAULT false,
 	"avatar" varchar(1000),
 	"phone" varchar(20),
