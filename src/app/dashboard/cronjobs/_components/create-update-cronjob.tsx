@@ -1,6 +1,5 @@
 'use client';
 
-import type { z } from 'zod';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
@@ -8,24 +7,22 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Calendar, AlertCircle, RefreshCw, Globe, Lock, Code, Send, Check } from 'lucide-react';
 
+import { cronjobDays } from '@/config/data';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { createCronjob, updateCronJob } from '@/lib/actions/cronjob-actions';
-import { CronJobSchema } from '@/lib/validations/cronjob-schema';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { cronjobDays } from '@/config/data';
 import { FormMode, FormModeType } from '@/const/form';
 import { updateCronExpression } from '@/lib/helpers/cron';
+import { createCronjob, updateCronJobs } from '../_lib/actions';
+import { CreateCronJobSchema, TCreateCronJobSchema } from '../_lib/validations';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const TIMEZONES = Intl.supportedValuesOf('timeZone');
-
-type CronJobFormValues = z.infer<typeof CronJobSchema>;
 
 interface PropTypes {
   formMode: FormModeType;
@@ -36,8 +33,8 @@ export default function CreateUpdateCronjob({ formMode }: PropTypes) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [nextRuns, setNextRuns] = useState<string[]>([]);
 
-  const form = useForm<CronJobFormValues>({
-    resolver: zodResolver(CronJobSchema),
+  const form = useForm<TCreateCronJobSchema>({
+    resolver: zodResolver(CreateCronJobSchema),
     defaultValues: {
       name: '',
       url: 'http://',
@@ -58,7 +55,7 @@ export default function CreateUpdateCronjob({ formMode }: PropTypes) {
   });
 
   // Handle form submission
-  const onSubmit = async (data: CronJobFormValues) => {
+  const onSubmit = async (data: TCreateCronJobSchema) => {
     try {
       setIsSubmitting(true);
 
@@ -66,7 +63,7 @@ export default function CreateUpdateCronjob({ formMode }: PropTypes) {
       if (formMode === FormMode.CREATE) {
         result = await createCronjob(data);
       } else if (formMode === FormMode.UPDATE) {
-        result = await updateCronJob(1, data);
+        result = await updateCronJobs(1, data);
       }
 
       if (result?.success) {

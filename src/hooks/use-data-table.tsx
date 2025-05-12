@@ -1,7 +1,7 @@
 'use client';
 
-import { z } from 'zod';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useDebouncedCallback } from './use-debounced-callback';
 import {
   type ColumnFiltersState,
   type PaginationState,
@@ -9,6 +9,7 @@ import {
   type TableOptions,
   type TableState,
   type VisibilityState,
+  type Updater,
   useReactTable,
   getCoreRowModel,
   getFacetedRowModel,
@@ -16,17 +17,17 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFacetedMinMaxValues,
 } from '@tanstack/react-table';
-import useQueryString from '@/hooks/use-query-string';
-import useDebouncedValue from '@/hooks/use-debounced-value';
-import type { DataTableFilterField } from '@/types/data-table';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { type Parser, type UseQueryStateOptions, parseAsArrayOf, parseAsInteger, parseAsString, useQueryState, useQueryStates } from 'nuqs';
+
+import { getSortingStateParser } from '@/lib/parsers';
+import { ExtendedColumnSort } from '@/types/data-table';
 
 interface UseDataTableProps<TData>
-  extends Omit<TableOptions<TData>, 'pageCount' | 'getCoreRowModel' | 'manualFiltering' | 'manualPagination' | 'manualSorting'>,
+  extends Omit<TableOptions<TData>, 'state' | 'pageCount' | 'getCoreRowModel' | 'manualFiltering' | 'manualPagination' | 'manualSorting'>,
     Required<Pick<TableOptions<TData>, 'pageCount'>> {
-  filterFields?: DataTableFilterField<TData>[];
-  method?: 'push' | 'replace';
+  history?: 'push' | 'replace';
   scroll?: boolean;
   startTransition?: React.TransitionStartFunction;
   debounceMs?: number;
@@ -41,241 +42,199 @@ interface UseDataTableProps<TData>
   };
 }
 
-const searchParamsSchema = z.object({
-  page: z.coerce.number().default(1),
-  per_page: z.coerce.number().optional(),
-  sort: z.string().optional(),
-});
-
+const PAGE_KEY = 'page';
+const PER_PAGE_KEY = 'perPage';
+const SORT_KEY = 'sort';
+const ARRAY_SEPARATOR = ',';
 const DEBOUNCE_MS = 300;
 const THROTTLE_MS = 50;
 
 export function useDataTable<TData>({
+  columns,
+  initialState,
   pageCount = -1,
-  filterFields = [],
-  method = 'replace',
   scroll = false,
   shallow = true,
-  clearOnDefault = false,
   startTransition,
+  history = 'replace',
+  clearOnDefault = false,
   debounceMs = DEBOUNCE_MS,
   throttleMs = THROTTLE_MS,
-  initialState,
-  columns,
   ...tableProps
 }: UseDataTableProps<TData>) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { createQueryString } = useQueryString(searchParams);
+  const queryStateOptions = useMemo<Omit<UseQueryStateOptions<string>, 'parse'>>(
+    () => ({
+      history,
+      scroll,
+      shallow,
+      throttleMs,
+      debounceMs,
+      clearOnDefault,
+      startTransition,
+    }),
+    [history, scroll, shallow, throttleMs, debounceMs, clearOnDefault, startTransition],
+  );
 
-  const [mounted, setMounted] = useState(false);
-  const [isFilterChange, setIsFilterChange] = useState(false);
+  const [page, setPage] = useQueryState(PAGE_KEY, parseAsInteger.withOptions(queryStateOptions).withDefault(1));
+  const [perPage, setPerPage] = useQueryState(
+    PER_PAGE_KEY,
+    parseAsInteger.withOptions(queryStateOptions).withDefault(initialState?.pagination?.pageSize ?? 10),
+  );
 
-  // Search params
-  const search = searchParamsSchema.parse(Object.fromEntries(searchParams));
-
-  const page = search.page ?? 1;
-  const perPage = search.per_page ?? initialState?.pagination?.pageSize ?? 10;
-
-  const sort = search.sort ?? `${initialState?.sorting?.[0]?.id}.${initialState?.sorting?.[0]?.desc ? 'desc' : 'asc'}`;
-  const [column, order] = sort?.split('.') ?? [];
-
-  // Memoize computation of searchableColumns and filterableColumns
-  const { searchableColumns, filterableColumns } = useMemo(() => {
+  // pagination related
+  const pagination: PaginationState = useMemo(() => {
     return {
-      searchableColumns: filterFields.filter(field => !field.options),
-      filterableColumns: filterFields.filter(field => field.options),
+      pageIndex: page - 1,
+      pageSize: perPage,
     };
-  }, [filterFields]);
+  }, [page, perPage]);
 
-  // Initial column filters
+  const onPaginationChange = useCallback(
+    (updaterOrValue: Updater<PaginationState>) => {
+      if (typeof updaterOrValue === 'function') {
+        const newPagination = updaterOrValue(pagination);
+        void setPage(newPagination.pageIndex + 1);
+        void setPerPage(newPagination.pageSize);
+      } else {
+        void setPage(updaterOrValue.pageIndex + 1);
+        void setPerPage(updaterOrValue.pageSize);
+      }
+    },
+    [pagination, setPage, setPerPage],
+  );
+
+  // sorting related
+  const columnIds = useMemo(() => {
+    return new Set(columns.map(column => column.id).filter(Boolean) as string[]);
+  }, [columns]);
+
+  const [sorting, setSorting] = useQueryState(
+    SORT_KEY,
+    getSortingStateParser<TData>(columnIds)
+      .withOptions(queryStateOptions)
+      .withDefault(initialState?.sorting ?? []),
+  );
+
+  const onSortingChange = useCallback(
+    (updaterOrValue: Updater<SortingState>) => {
+      if (typeof updaterOrValue === 'function') {
+        const newSorting = updaterOrValue(sorting);
+        setSorting(newSorting as ExtendedColumnSort<TData>[]);
+      } else {
+        setSorting(updaterOrValue as ExtendedColumnSort<TData>[]);
+      }
+    },
+    [sorting, setSorting],
+  );
+
+  // filtering related
+  const filterableColumns = useMemo(() => {
+    return columns.filter(column => column.enableColumnFilter);
+  }, [columns]);
+
+  const filterParsers = useMemo(() => {
+    return filterableColumns.reduce<Record<string, Parser<string> | Parser<string[]>>>((acc, column) => {
+      if (column.meta?.options) {
+        acc[column.id ?? ''] = parseAsArrayOf(parseAsString, ARRAY_SEPARATOR).withOptions(queryStateOptions);
+      } else {
+        acc[column.id ?? ''] = parseAsString.withOptions(queryStateOptions);
+      }
+      return acc;
+    }, {});
+  }, [filterableColumns, queryStateOptions]);
+
+  const [filterValues, setFilterValues] = useQueryStates(filterParsers);
+
+  const debouncedSetFilterValues = useDebouncedCallback((values: typeof filterValues) => {
+    void setPage(1);
+    void setFilterValues(values);
+  }, debounceMs);
+
   const initialColumnFilters: ColumnFiltersState = useMemo(() => {
-    return Array.from(searchParams.entries()).reduce<ColumnFiltersState>((filters, [key, value]) => {
-      const filterableColumn = filterableColumns.find(column => column.value === key);
-      const searchableColumn = searchableColumns.find(column => column.value === key);
+    return Object.entries(filterValues).reduce<ColumnFiltersState>((filters, [key, value]) => {
+      if (value !== null) {
+        const processedValue = Array.isArray(value)
+          ? value
+          : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
+          ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
+          : [value];
 
-      if (filterableColumn) {
         filters.push({
           id: key,
-          value: value.split('.'),
-        });
-      } else if (searchableColumn) {
-        filters.push({
-          id: key,
-          value: [value],
+          value: processedValue,
         });
       }
-
       return filters;
     }, []);
-  }, [filterableColumns, searchableColumns, searchParams]);
+  }, [filterValues]);
+
+  const onColumnFiltersChange = useCallback(
+    (updaterOrValue: Updater<ColumnFiltersState>) => {
+      setColumnFilters(prev => {
+        const next = typeof updaterOrValue === 'function' ? updaterOrValue(prev) : updaterOrValue;
+
+        const filterUpdates = next.reduce<Record<string, string | string[] | null>>((acc, filter) => {
+          if (filterableColumns.find(column => column.id === filter.id)) {
+            acc[filter.id] = filter.value as string | string[];
+          }
+          return acc;
+        }, {});
+
+        for (const prevFilter of prev) {
+          if (!next.some(filter => filter.id === prevFilter.id)) {
+            filterUpdates[prevFilter.id] = null;
+          }
+        }
+
+        debouncedSetFilterValues(filterUpdates);
+        return next;
+      });
+    },
+    [debouncedSetFilterValues, filterableColumns],
+  );
 
   // Table states
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState(initialState?.rowSelection ?? {});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialColumnFilters);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialState?.columnVisibility ?? {});
-
-  // Handle server-side pagination
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: page - 1,
-    pageSize: perPage,
-  });
-
-  // Sync pagination with URL params when the URL changes
-  useEffect(() => {
-    if (mounted) {
-      setPagination({
-        pageIndex: page - 1,
-        pageSize: perPage,
-      });
-    }
-  }, [page, perPage, mounted]);
-
-  const pagination = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
-
-  // Handle server-side sorting
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: column ?? '',
-      desc: order === 'desc',
-    },
-  ]);
-
-  // Handle server-side filtering
-  const filterableColumnFilters = columnFilters.filter(col => {
-    return filterableColumns.find(column => column.value === col.id);
-  });
-
-  const debouncedSearchableColumnFilters = JSON.parse(
-    useDebouncedValue(
-      JSON.stringify(
-        columnFilters.filter(filter => {
-          return searchableColumns.find(column => column.value === filter.id);
-        }),
-      ),
-      500,
-    ),
-  ) as ColumnFiltersState;
-
-  // Update URL when pagination or sorting changes
-  useEffect(() => {
-    if (!mounted) {
-      setMounted(true);
-      return;
-    }
-
-    function onUrlChange() {
-      const url = `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        per_page: pageSize,
-        sort: sorting[0]?.id ? `${sorting[0]?.id}.${sorting[0]?.desc ? 'desc' : 'asc'}` : null,
-      })}`;
-
-      method === 'push' ? router.push(url, { scroll }) : router.replace(url, { scroll });
-    }
-
-    startTransition
-      ? startTransition(() => {
-          onUrlChange();
-        })
-      : onUrlChange();
-  }, [pageIndex, pageSize, sorting, method, scroll, mounted, pathname, router, createQueryString, startTransition]);
-
-  // Handle filter changes
-  useEffect(() => {
-    // Prevent resetting the page on initial render
-    if (!mounted) {
-      setMounted(true);
-      return;
-    }
-
-    // Initialize new params
-    const newParamsObject = {};
-
-    // Handle debounced searchable column filters
-    for (const column of debouncedSearchableColumnFilters) {
-      if (typeof column.value === 'string') {
-        Object.assign(newParamsObject, {
-          [column.id]: typeof column.value === 'string' ? column.value : null,
-        });
-      }
-    }
-
-    // Handle filterable column filters
-    for (const column of filterableColumnFilters) {
-      if (typeof column.value === 'object' && Array.isArray(column.value)) {
-        Object.assign(newParamsObject, { [column.id]: column.value.join('.') });
-      }
-    }
-
-    // Remove deleted values
-    for (const key of searchParams.keys()) {
-      if (
-        (searchableColumns.find(column => column.value === key) && !debouncedSearchableColumnFilters.find(column => column.id === key)) ||
-        (filterableColumns.find(column => column.value === key) && !filterableColumnFilters.find(column => column.id === key))
-      ) {
-        Object.assign(newParamsObject, { [key]: null });
-      }
-    }
-
-    // Only reset page to 1 if there was a filter change
-    if (Object.keys(newParamsObject).length > 0) {
-      setIsFilterChange(true);
-      Object.assign(newParamsObject, { page: 1 });
-
-      // After cumulating all the changes, push new params
-      function onUrlChange() {
-        const url = `${pathname}?${createQueryString(newParamsObject)}`;
-        method === 'push' ? router.push(url, { scroll }) : router.replace(url, { scroll });
-      }
-
-      startTransition
-        ? startTransition(() => {
-            onUrlChange();
-          })
-        : onUrlChange();
-    }
-  }, [
-    JSON.stringify(debouncedSearchableColumnFilters),
-    JSON.stringify(filterableColumnFilters),
-    method,
-    scroll,
-    mounted,
-    pathname,
-    router,
-    createQueryString,
-    startTransition,
-    searchParams,
-    searchableColumns,
-    filterableColumns,
-  ]);
 
   // table instance
   const table = useReactTable({
     ...tableProps,
-    pageCount,
     columns,
+    pageCount,
     initialState,
     state: {
-      pagination,
       sorting,
+      pagination,
       columnVisibility,
       rowSelection,
       columnFilters,
     },
+    defaultColumn: {
+      ...tableProps.defaultColumn,
+      enableColumnFilter: false,
+    },
+    manualSorting: true,
+    manualFiltering: true,
+    manualPagination: true,
     enableRowSelection: true,
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
+
+    onSortingChange,
+    onPaginationChange,
+    onColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+
     getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return { table };

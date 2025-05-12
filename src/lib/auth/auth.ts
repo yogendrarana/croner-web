@@ -1,9 +1,9 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 
-import db from '@/lib/db';
+import db from '@/server/db';
 import { nextCookies } from 'better-auth/next-js';
-import { AccountTable, UserTable, VerificationTable, SessionTable } from '@/lib/db/schema';
+import { AccountTable, UserTable, VerificationTable, SessionTable } from '@/server/db/schema';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
