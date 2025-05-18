@@ -1,11 +1,8 @@
-'use client';
-
 import Container from '@/components/container';
 import Header from '@/components/layout/header';
 import { DashboardNav } from '@/components/layout/dashboard-nav';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-
   return (
     <Container>
       <Header />

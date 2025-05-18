@@ -67,12 +67,12 @@ export default function Header() {
           </div>
         ) : (
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="ghost" size="sm" className="cursor-pointer">
                 Log in
               </Button>
             </Link>
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button size="sm" className="cursor-pointer">
                 Sign up
               </Button>

@@ -9,7 +9,7 @@ import DataTableSkeleton from '@/components/data-table/data-table-skeleton';
 import CronJobTable from '@/app/dashboard/cronjobs/_components/table/cronjob-table';
 
 interface PropType {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }
 
 export default async function CronJobsPage(props: PropType) {
