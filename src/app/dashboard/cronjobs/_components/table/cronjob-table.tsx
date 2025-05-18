@@ -23,6 +23,8 @@ export default function CronJobTable({ promises }: PropType) {
     data: payload.data || [],
     columns,
     pageCount: payload.pageCount,
+    shallow: false,
+    clearOnDefault: true,
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
       columnPinning: { right: ['actions'] },

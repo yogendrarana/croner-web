@@ -26,11 +26,11 @@ export function CronJobTableActionBar({ table }: CronJobTableActionBarProps) {
 
   const getIsActionPending = React.useCallback((action: Action) => isPending && currentAction === action, [isPending, currentAction]);
 
-  const onTaskExport = React.useCallback(() => {
+  const onCronjobExport = React.useCallback(() => {
     setCurrentAction('export');
     startTransition(() => {
       exportTableToCSV(table, {
-        filename: 'cronjobs.csv',
+        filename: 'cronjobs',
         excludeColumns: ['select', 'actions'],
         onlySelected: true,
       });
@@ -40,14 +40,16 @@ export function CronJobTableActionBar({ table }: CronJobTableActionBarProps) {
   const onCronJobsDelete = React.useCallback(() => {
     setCurrentAction('delete');
     startTransition(async () => {
-      const { error } = await deleteCronJobs({
+      const { success, message } = await deleteCronJobs({
         ids: rows.map(row => row.original.id),
       });
 
-      if (error) {
-        toast.error(error);
+      if (!success) {
+        toast.error(message || 'Failed to delete cronjobs');
         return;
       }
+
+      toast.success(message || 'Cronjobs deleted successfully');
       table.toggleAllRowsSelected(false);
     });
   }, [rows, table]);
@@ -57,10 +59,10 @@ export function CronJobTableActionBar({ table }: CronJobTableActionBarProps) {
       <DataTableActionBarSelection table={table} />
       <Separator orientation="vertical" className="hidden data-[orientation=vertical]:h-5 sm:block" />
       <div className="flex items-center gap-1.5">
-        <DataTableActionBarAction size="icon" tooltip="Export tasks" isPending={getIsActionPending('export')} onClick={onTaskExport}>
+        <DataTableActionBarAction size="icon" tooltip="Export cronjobs" isPending={getIsActionPending('export')} onClick={onCronjobExport}>
           <Download />
         </DataTableActionBarAction>
-        <DataTableActionBarAction size="icon" tooltip="Delete tasks" isPending={getIsActionPending('delete')} onClick={onCronJobsDelete}>
+        <DataTableActionBarAction size="icon" tooltip="Delete cronjobs" isPending={getIsActionPending('delete')} onClick={onCronJobsDelete}>
           <Trash2 />
         </DataTableActionBarAction>
       </div>

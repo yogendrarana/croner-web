@@ -1,7 +1,5 @@
 import 'server-only';
 
-export const revalidate = 0; // Disable caching completely
-
 import { and, asc, count, desc, gte, ilike, inArray, lte } from 'drizzle-orm';
 
 import db from '@/server/db';
@@ -18,6 +16,7 @@ export async function getCronJobs(input: TGetCronJobsSearchParams) {
         const where = and(
           input.name ? ilike(CronJobTable.name, `%${input.name}%`) : undefined,
           input.status.length > 0 ? inArray(CronJobTable.status, input.status) : undefined,
+          input.lastRunStatus.length > 0 ? inArray(CronJobTable.lastRunStatus, input.lastRunStatus) : undefined,
           input.createdAt.length > 0
             ? and(
                 input.createdAt[0]
@@ -96,7 +95,6 @@ export async function getCronJobs(input: TGetCronJobsSearchParams) {
     },
     [JSON.stringify(input)],
     {
-      revalidate: 1,
       tags: ['cronjobs'],
     },
   )();
