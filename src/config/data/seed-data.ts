@@ -1,7 +1,7 @@
 import { jobLastRunStatusEnum } from './../../server/db/schemas/cronjob';
 import { faker } from '@faker-js/faker';
 
-import { CronJobInsert, CronJobTable } from '@/server/db/schema';
+import { CronJobInsert, CronJobTable, JobExecutionInsert, JobExecutionTable } from '@/server/db/schema';
 import { RoleEnum, UserStatusEnum } from '@/types/enums/user-enums';
 import { TCronJobLastRunStatus, TCronJobStatus } from '@/app/dashboard/cronjobs/_lib/validations';
 
@@ -59,9 +59,39 @@ const generateCronjob = (): CronJobInsert => ({
   httpMethod: faker.helpers.arrayElement(['GET', 'POST', 'PUT', 'DELETE']),
 });
 
+// Generate a random job execution
+const generateJobExecution = (cronJobId: string): JobExecutionInsert => {
+  const startedAt = faker.date.past({ years: 1 }); // Limit to past year
+  // Most jobs complete within a few seconds
+  const completedAt = new Date(startedAt.getTime() + faker.number.int({ min: 100, max: 5000 }));
+  
+  const duration = Math.floor((completedAt.getTime() - startedAt.getTime()));
+  const responseTime = faker.number.int({ min: 50, max: duration });
+
+  return {
+    id: faker.string.uuid(),
+    cronJobId,
+    status: faker.helpers.arrayElement(JobExecutionTable.status.enumValues),
+    startedAt,
+    completedAt,
+    responseTime,
+    duration,
+    statusCode: faker.helpers.arrayElement([200, 201, 204, 400, 401, 403, 404, 500]),
+    responseBody: faker.helpers.maybe(() => JSON.stringify({ message: faker.lorem.sentence() })),
+    errorMessage: faker.helpers.maybe(() => faker.lorem.sentence()),
+    retryCount: faker.helpers.maybe(() => faker.number.int({ min: 0, max: 3 }), { probability: 0.3 }),
+    isRetry: faker.datatype.boolean(),
+  };
+};
+
 // Generate multiple users and cronjobs
 export const users = Array.from({ length: 10 }, generateUser);
 export const cronjobs = Array.from({ length: 40 }, generateCronjob);
+
+// Generate job executions for each cronjob
+export const jobExecutions = cronjobs.flatMap(cronjob => 
+  Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => generateJobExecution(cronjob.id))
+);
 
 // Common password for all users
 export const DEFAULT_PASSWORD = 'password1A@';

@@ -69,6 +69,8 @@ export const createCronjob = async (cronjob: TCreateCronJobSchema): Promise<ApiR
     });
 
     revalidatePath('/dashboard/cronjobs');
+    revalidateTag(`dashboard-${session.user.id}`);
+    
     return {
       success: true,
       message: 'Cronjob created successfully!',

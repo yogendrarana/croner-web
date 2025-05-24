@@ -1,19 +1,34 @@
 import 'server-only';
 
-import { and, asc, count, desc, gte, ilike, inArray, lte } from 'drizzle-orm';
+import { headers } from 'next/headers';
+import { and, asc, count, desc, eq, gte, ilike, inArray, lte } from 'drizzle-orm';
 
 import db from '@/server/db';
+import { auth } from '@/lib/auth/auth';
 import { unstable_cache } from '@/lib/unstable-cache';
 import { CronJobTable } from '@/server/db/schemas/cronjob';
 import { TGetCronJobsSearchParams } from '@/app/dashboard/cronjobs/_lib/search-params-schema';
 
 export async function getCronJobs(input: TGetCronJobsSearchParams) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.session || !session?.user) {
+    return {
+      success: false,
+      message: 'Unauthorized',
+      payload: null,
+    };
+  }
+
   return await unstable_cache(
     async () => {
       try {
         const offset = (input.page - 1) * input.perPage;
 
         const where = and(
+          eq(CronJobTable.userId, session.user.id),
           input.name ? ilike(CronJobTable.name, `%${input.name}%`) : undefined,
           input.status.length > 0 ? inArray(CronJobTable.status, input.status) : undefined,
           input.lastRunStatus.length > 0 ? inArray(CronJobTable.lastRunStatus, input.lastRunStatus) : undefined,
@@ -93,9 +108,9 @@ export async function getCronJobs(input: TGetCronJobsSearchParams) {
         };
       }
     },
-    [JSON.stringify(input)],
+    [JSON.stringify(input), session.user.id],
     {
-      tags: ['cronjobs'],
+      tags: [`cronjobs-${session.user.id}`],
     },
   )();
 }

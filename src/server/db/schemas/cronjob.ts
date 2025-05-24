@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import { pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { UserTable } from './user';
+import { JobExecutionTable } from './job-execution';
 
 // Enums
 export const httpMethodEnum = pgEnum('http_method', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
@@ -57,11 +58,12 @@ export const CronJobTable = pgTable('cronjob', t => ({
 }));
 
 // relations
-export const cronjobRelations = relations(CronJobTable, ({ one }) => ({
+export const cronjobRelations = relations(CronJobTable, ({ one, many }) => ({
   user: one(UserTable, {
     fields: [CronJobTable.userId],
     references: [UserTable.id],
   }),
+  executions: many(JobExecutionTable),
 }));
 
 // types

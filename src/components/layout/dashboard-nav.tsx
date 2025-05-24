@@ -1,17 +1,17 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import React from "react";
 import {
   LayoutDashboard,
   Clock,
-  Activity,
   BarChart3,
   Settings,
   CreditCard,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { cn } from "@/lib/utils";
 
 const routes = [
   {
@@ -25,14 +25,9 @@ const routes = [
     href: "/dashboard/cronjobs",
   },
   {
-    label: "Status",
-    icon: Activity,
-    href: "/dashboard/status",
-  },
-  {
-    label: "Statistics",
+    label: "Metrics",
     icon: BarChart3,
-    href: "/dashboard/statistics",
+    href: "/dashboard/metrics",
   },
   {
     label: "Billing",

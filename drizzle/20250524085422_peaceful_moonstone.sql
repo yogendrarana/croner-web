@@ -1,6 +1,7 @@
 CREATE TYPE "public"."http_method" AS ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE');--> statement-breakpoint
 CREATE TYPE "public"."last_run_status" AS ENUM('success', 'failed');--> statement-breakpoint
 CREATE TYPE "public"."job_status" AS ENUM('enabled', 'disabled', 'paused');--> statement-breakpoint
+CREATE TYPE "public"."execution_status" AS ENUM('success', 'failed', 'timeout', 'error');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('super_admin', 'admin', 'customer', 'staff', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('active', 'inactive', 'banned');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -47,17 +48,22 @@ CREATE TABLE "cronjob" (
 	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "session" (
+CREATE TABLE "job_execution" (
 	"id" text PRIMARY KEY NOT NULL,
 	"serial_id" serial NOT NULL,
-	"expires_at" timestamp NOT NULL,
-	"token" text NOT NULL,
-	"ip_address" text,
-	"user_agent" text,
-	"user_id" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp NOT NULL,
-	CONSTRAINT "session_token_unique" UNIQUE("token")
+	"cron_job_id" text NOT NULL,
+	"status" "execution_status" NOT NULL,
+	"started_at" timestamp with time zone NOT NULL,
+	"completed_at" timestamp with time zone,
+	"response_time" integer,
+	"duration" integer,
+	"status_code" integer,
+	"response_body" text,
+	"error_message" text,
+	"retry_count" integer DEFAULT 0,
+	"is_retry" boolean DEFAULT false,
+	"created_at" timestamp with time zone DEFAULT now(),
+	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
@@ -77,6 +83,19 @@ CREATE TABLE "user" (
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "session" (
+	"id" text PRIMARY KEY NOT NULL,
+	"serial_id" serial NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"token" text NOT NULL,
+	"ip_address" text,
+	"user_agent" text,
+	"user_id" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	CONSTRAINT "session_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
 CREATE TABLE "verifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"serial_id" serial NOT NULL,
@@ -89,4 +108,5 @@ CREATE TABLE "verifications" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cronjob" ADD CONSTRAINT "cronjob_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "job_execution" ADD CONSTRAINT "job_execution_cron_job_id_cronjob_id_fk" FOREIGN KEY ("cron_job_id") REFERENCES "public"."cronjob"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
