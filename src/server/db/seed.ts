@@ -1,8 +1,9 @@
 import { hash } from 'bcryptjs';
 import { faker } from '@faker-js/faker';
-import { users, cronjobs, DEFAULT_PASSWORD } from '@/config/data/seed-data';
-import { UserTable, AccountTable, SessionTable, CronJobTable } from '@/server/db/schema';
+
 import db from '@/server/db';
+import { users, cronjobs, jobExecutions, DEFAULT_PASSWORD } from '@/config/data/seed-data';
+import { UserTable, AccountTable, SessionTable, CronJobTable, JobExecutionTable } from '@/server/db/schema';
 
 async function seed() {
   try {
@@ -10,6 +11,7 @@ async function seed() {
 
     await db.transaction(async tx => {
       // Clear existing data
+      await tx.delete(JobExecutionTable);
       await tx.delete(CronJobTable);
       await tx.delete(SessionTable);
       await tx.delete(AccountTable);
@@ -50,6 +52,17 @@ async function seed() {
       }
 
       console.log('⏰ Created cronjobs');
+
+      // Insert job executions
+      for (const execution of jobExecutions) {
+        await tx.insert(JobExecutionTable).values({
+          ...execution,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+
+      console.log('📊 Created job executions');
     });
 
     console.log('✅ Database seed completed successfully');
