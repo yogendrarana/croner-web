@@ -20,9 +20,9 @@ export default function CronJobTable({ promises }: PropType) {
   const columns = useMemo(() => getCronJobCTableTableColumns(), []);
 
   const { table } = useDataTable({
-    data: payload.data || [],
+    data: payload?.data || [],
     columns,
-    pageCount: payload.pageCount,
+    pageCount: payload?.pageCount || 10,
     shallow: false,
     clearOnDefault: true,
     initialState: {
