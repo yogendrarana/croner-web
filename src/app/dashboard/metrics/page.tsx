@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Clock, Timer, BarChart3, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Activity, Clock, Timer, CheckCircle2 } from 'lucide-react';
 import { getMetricsData } from '../_lib/queries';
 
 export default async function MetricsPage() {
@@ -9,7 +9,7 @@ export default async function MetricsPage() {
     return (
       <div className="flex-1 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Cron Job Metrics</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Cron Job Metrics</h2>
         </div>
         <div className="flex h-[400px] items-center justify-center">
           <p className="text-muted-foreground">Failed to load metrics data</p>
@@ -21,7 +21,7 @@ export default async function MetricsPage() {
   return (
     <div className="flex-1 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Cron Job Metrics</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Cron Job Metrics</h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -78,9 +78,7 @@ export default async function MetricsPage() {
           </CardHeader>
           <CardContent>
             {/* Add your response time chart here */}
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              Response time chart will be displayed here
-            </div>
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Response time chart will be displayed here</div>
           </CardContent>
         </Card>
 
@@ -91,9 +89,7 @@ export default async function MetricsPage() {
           </CardHeader>
           <CardContent>
             {/* Add your duration distribution chart here */}
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              Duration distribution chart will be displayed here
-            </div>
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Duration distribution chart will be displayed here</div>
           </CardContent>
         </Card>
       </div>
@@ -106,9 +102,7 @@ export default async function MetricsPage() {
           </CardHeader>
           <CardContent>
             {/* Add your execution patterns chart here */}
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              Execution patterns chart will be displayed here
-            </div>
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Execution patterns chart will be displayed here</div>
           </CardContent>
         </Card>
 
@@ -119,12 +113,10 @@ export default async function MetricsPage() {
           </CardHeader>
           <CardContent>
             {/* Add your error analysis chart here */}
-            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-              Error analysis chart will be displayed here
-            </div>
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">Error analysis chart will be displayed here</div>
           </CardContent>
         </Card>
       </div>
     </div>
   );
-} 
+}
